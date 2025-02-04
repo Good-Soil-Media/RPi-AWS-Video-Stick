@@ -24,7 +24,7 @@ A lightweight Python-based video player for the **Raspberry Pi Zero 2 W** that p
 ## **Overview**
 This project enables a Raspberry Pi to continuously play a video file while checking an AWS **S3 bucket** for updates. If a new video is uploaded, the Pi automatically downloads it, moves the old video to a backup folder, and plays the new file. 
 
-Designed for **remote digital signage**, this system includes logging and system monitoring.
+Designed for displaying signage, menus, and other content remotely for businesses. 
 
 ---
 
