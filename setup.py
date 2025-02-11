@@ -1,6 +1,7 @@
 import json
 import os
 
+# Adjust this path if needed (e.g., use /home/pi or /home/<username>)
 CONFIG_FILE = "/home/pi/config.json"
 
 def setup():
@@ -14,6 +15,9 @@ def setup():
     group_dir = input("Enter the group name (if applicable): ").strip()
     device_dir = input("Enter the S3 directory to monitor (e.g., 'device001'): ").strip()
     github_url = input("Enter the GitHub URL for the project: ").strip()
+
+    if github_url == "":
+        github_url = "SilentKnight-24/RPi-AWS-Video-Stick"
     
     if group_dir != "":
         s3_dir = f"{group_dir}/{device_dir}"
@@ -22,7 +26,8 @@ def setup():
 	
     config = {
         "bucket_name": bucket_name,
-        "s3_dir": s3_dir
+        "s3_dir": s3_dir,
+        "github_url": github_url
     }
 
     with open(CONFIG_FILE, "w") as file:
