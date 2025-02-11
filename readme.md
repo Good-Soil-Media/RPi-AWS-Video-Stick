@@ -17,7 +17,6 @@ A lightweight Python-based video player for the **Raspberry Pi Zero 2 W** that p
   - [Checking Logs](#checking-logs)
   - [Manually Forcing an Update](#manually-forcing-an-update)
 - [Testing and Deployment](#testing-and-deployment)
-- [License](#license)
 
 ---
 
@@ -132,28 +131,27 @@ Designed for displaying signage, menus, and other content remotely for businesse
 ### **3. Install Required Software**
 ```bash
 sudo apt install python3 python3-pip vlc awscli -y
-pip3 install boto3
+sudo apt install python3-boto3
 ```
 
 ### **4. Project Directory Setup**
 1. **Create Required Directories**
    ```bash
-   mkdir -p /home/pi/video
+   mkdir -p /home/<username>/video
    ```
 
 2. Create Python Files
    ```bash
-   sudo nano /home/pi/video/main.py
+   sudo nano /home/<username>/main.py
    ```
    - Copy the script from the repository
+   - Enter the root username of your pi at the top of the main.py script
    - Hit `CTRL+X` then `y` and then `ENTER` to save the changes
    - Do the same for the setup.py file
 
 3. **Make Python Scripts Executable**
    ```bash
-   sudo chmod +x /home/pi/setup.py /home/pi/main.py
-   ```
-
+   sudo chmod +x /home/<username>/setup.py /home/<username>/main.py
 4. **Set Up AWS Credentials**
    ```bash
    aws configure
@@ -164,13 +162,13 @@ pip3 install boto3
 ### **5. Configure and Automate the System**
 1. **Run Setup Script**
    ```bash
-   python3 /home/pi/setup.py
+   python3 /home/<username>/setup.py
    ```
    - Generates `config.json` with S3 bucket details.
 
 2. **Test the Main Script**
    ```bash
-   python3 /home/pi/main.py
+   python3 /home/<username>/main.py
    ```
 
 3. **Create a `systemd` Service**
@@ -205,12 +203,12 @@ pip3 install boto3
 
 ### **Checking Logs**
 ```bash
-cat /home/pi/video_player.log
+cat /home/<username>/video_player.log
 ```
 
 ### **Manually Forcing an Update**
 ```bash
-python3 /home/pi/main.py update
+python3 /home/<username>/main.py update
 ```
 
 ### **Restart the Service**

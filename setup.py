@@ -13,6 +13,7 @@ def setup():
     bucket_name = input("Enter the AWS S3 bucket name: ").strip()
     group_dir = input("Enter the group name (if applicable): ").strip()
     device_dir = input("Enter the S3 directory to monitor (e.g., 'device001'): ").strip()
+    github_url = input("Enter the GitHub URL for the project: ").strip()
     
     if group_dir != "":
         s3_dir = f"{group_dir}/{device_dir}"

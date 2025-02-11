@@ -6,9 +6,9 @@ import json
 import logging
 from datetime import datetime
 
-CONFIG_FILE = "/home/pi/config.json"
-LOG_FILE = "/home/pi/video_player.log"
-LOCAL_VIDEO_DIR = "/home/pi/video/"
+CONFIG_FILE = "/home/<username>/config.json"
+LOG_FILE = "/home/<username>/video_player.log"
+LOCAL_VIDEO_DIR = "/home/<username>/video/"
 
 # Setup logging
 logging.basicConfig(
@@ -99,6 +99,12 @@ def move_to_backup(s3, bucket_name, base_dir, s3_key):
     except Exception as e:
         logging.error(f"Error moving file to backup: {e}")
 
+
+def firmware_update():
+    """Check for firmware updates from Github."""
+    pass
+
+
 # Main loop
 def main():
     """Main loop for playback and S3 monitoring."""
@@ -114,7 +120,7 @@ def main():
 
     try:
         while True:
-            time.sleep(60)  # Check every 60 seconds
+            time.sleep(300)  # Check every 5 Minutes
             logging.info("Checking for new video files...")
 
             new_file = check_s3(s3, bucket_name, base_dir)
