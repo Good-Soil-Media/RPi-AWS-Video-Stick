@@ -6,16 +6,7 @@ import json
 import logging
 from datetime import datetime
 
-CONFIG_FILE = "/home/goodsoilmedia/config.json"
-LOG_FILE = "/home/goodsoilmedia/video_player.log"
-LOCAL_VIDEO_DIR = "/home/goodsoilmedia/video/"
-
-# Setup logging
-logging.basicConfig(
-    filename=LOG_FILE,
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
+CONFIG_FILE = os.path.expanduser("~/.config/video_player/config.json")
 
 # Load configuration
 def load_config():
@@ -26,6 +17,18 @@ def load_config():
     except Exception as e:
         logging.error(f"Failed to load configuration: {e}")
         raise
+
+config = load_config()
+USERNAME = config["username"]
+LOG_FILE = f"/home/{USERNAME}/video_player.log"
+LOCAL_VIDEO_DIR = f"/home/{USERNAME}/video/"
+
+# Setup logging
+logging.basicConfig(
+    filename=LOG_FILE,
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 # AWS S3 client
 def get_s3_client():
@@ -102,7 +105,6 @@ def move_to_backup(s3, bucket_name, base_dir, s3_key):
 # Main loop
 def main():
     """Main loop for playback and S3 monitoring."""
-    config = load_config()
     bucket_name = config["bucket_name"]
     base_dir = config["s3_dir"]
     s3 = get_s3_client()
