@@ -80,15 +80,25 @@ def check_s3(s3, bucket_name, base_dir):
         return None
 
 def download_file(s3, bucket_name, s3_key):
-    """Download the file from S3."""
+    """Download the file from S3 and ensure it does not overwrite the current video."""
+    base_filename = os.path.basename(s3_key)
+    local_path = os.path.join(LOCAL_VIDEO_DIR, base_filename)
+
+    # If the file already exists, append a number to avoid conflicts
+    counter = 1
+    while os.path.exists(local_path):
+        file_name, ext = os.path.splitext(base_filename)
+        local_path = os.path.join(LOCAL_VIDEO_DIR, f"{file_name}_{counter}{ext}")
+        counter += 1
+
     try:
-        local_path = os.path.join(LOCAL_VIDEO_DIR, os.path.basename(s3_key))
         s3.download_file(bucket_name, s3_key, local_path)
         logging.info(f"Downloaded file: {local_path}")
         return local_path
     except Exception as e:
         logging.error(f"Error downloading file: {e}")
         return None
+
 
 def move_to_backup(s3, bucket_name, base_dir, s3_key):
     """Move the file to the backups directory in S3 with a timestamp."""
