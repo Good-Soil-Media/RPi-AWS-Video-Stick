@@ -5,7 +5,27 @@ import boto3
 import json
 import logging
 from datetime import datetime
-import manage  # import shared configuration and functions
+
+CONFIG_FILE = "/home/goodsoilmedia/config.json"
+LOG_FILE = "/home/goodsoilmedia/video_player.log"
+LOCAL_VIDEO_DIR = "/home/goodsoilmedia/video/"
+
+# Setup logging
+logging.basicConfig(
+    filename=LOG_FILE,
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+# Load configuration
+def load_config():
+    """Load configuration from config.json."""
+    try:
+        with open(CONFIG_FILE, "r") as file:
+            return json.load(file)
+    except Exception as e:
+        logging.error(f"Failed to load configuration: {e}")
+        raise
 
 # AWS S3 client
 def get_s3_client():
@@ -15,15 +35,14 @@ def get_s3_client():
 # Video handling
 def find_video():
     """Find the first video file in the local directory."""
-    for file in os.listdir(manage.LOCAL_VIDEO_DIR):
+    for file in os.listdir(LOCAL_VIDEO_DIR):
         if file.lower().endswith((".mp4", ".mkv", ".avi", ".mov")):
-            return os.path.join(manage.LOCAL_VIDEO_DIR, file)
+            return os.path.join(LOCAL_VIDEO_DIR, file)
     return None
 
 def play_video(file_path):
     """Play a video file using VLC in fullscreen and loop mode."""
     logging.info(f"Starting playback for {file_path}")
-    # Using '--no-osd' and '--no-audio' per your original options; adjust as needed.
     return subprocess.Popen(["cvlc", "--fullscreen", "--loop", "--no-osd", "--no-audio", file_path])
 
 def stop_video(player_process):
@@ -60,7 +79,7 @@ def check_s3(s3, bucket_name, base_dir):
 def download_file(s3, bucket_name, s3_key):
     """Download the file from S3."""
     try:
-        local_path = os.path.join(manage.LOCAL_VIDEO_DIR, os.path.basename(s3_key))
+        local_path = os.path.join(LOCAL_VIDEO_DIR, os.path.basename(s3_key))
         s3.download_file(bucket_name, s3_key, local_path)
         logging.info(f"Downloaded file: {local_path}")
         return local_path
@@ -80,10 +99,10 @@ def move_to_backup(s3, bucket_name, base_dir, s3_key):
     except Exception as e:
         logging.error(f"Error moving file to backup: {e}")
 
-# Main loop for playback and S3 monitoring
+# Main loop
 def main():
     """Main loop for playback and S3 monitoring."""
-    config = manage.load_config()
+    config = load_config()
     bucket_name = config["bucket_name"]
     base_dir = config["s3_dir"]
     s3 = get_s3_client()
@@ -95,7 +114,7 @@ def main():
 
     try:
         while True:
-            time.sleep(300)  # Check every 5 minutes
+            time.sleep(300)  # Check every 60 seconds
             logging.info("Checking for new video files...")
 
             new_file = check_s3(s3, bucket_name, base_dir)
@@ -104,7 +123,7 @@ def main():
                 # Download the new file while keeping the old video playing
                 new_local_file = download_file(s3, bucket_name, new_file)
                 if new_local_file:
-                    # Move the new file to backup after a successful download
+                    # Move the new file to backup after successful download
                     move_to_backup(s3, bucket_name, base_dir, new_file)
 
                     # Transition playback to the new video
