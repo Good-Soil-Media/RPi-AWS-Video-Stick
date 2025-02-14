@@ -126,7 +126,7 @@ def main():
 
     try:
         while True:
-            time.sleep(300)  # Check every 60 seconds
+            
             logging.info("Checking for new video files...")
 
             new_file = check_s3(s3, bucket_name, base_dir)
@@ -149,6 +149,9 @@ def main():
 
                     # Update current_video to the new file
                     current_video = new_local_file
+
+            time.sleep(300)  # Check every 5 minutes
+
     except KeyboardInterrupt:
         logging.info("Keyboard interrupt detected. Stopping video playback and exiting.")
         stop_video(player)
