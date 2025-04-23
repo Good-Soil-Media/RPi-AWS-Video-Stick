@@ -1,0 +1,20 @@
+{
+    "filename": "test_1.mp4",
+    "order": 1,
+    "duration": null
+  },
+  {
+    "filename": "test_2.png",
+    "order": 2,
+    "duration": 15
+  },
+  {
+    "filename": "test_3.png",
+    "order": 3,
+    "duration": 10
+  },
+  {
+    "filename": "test_4.mp4",
+    "order": 4,
+    "duration": null
+  }
